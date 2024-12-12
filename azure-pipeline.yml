@@ -1,0 +1,38 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - name: 'TF_VERSION'
+    value: '1.0.0'
+  - name: 'AZURE_SERVICE_CONNECTION'
+    value: '<your-service-connection-name>'
+  - name: 'TF_WORKING_DIRECTORY'
+    value: './terraform'
+
+steps:
+- task: UseTerraform@0
+  inputs:
+    command: 'version'
+    terraformVersion: '$(TF_VERSION)'
+
+- task: UseTerraform@0
+  inputs:
+    command: 'init'
+    workingDirectory: '$(TF_WORKING_DIRECTORY)'
+    backendServiceArm: '$(AZURE_SERVICE_CONNECTION)'
+
+- task: UseTerraform@0
+  inputs:
+    command: 'plan'
+    workingDirectory: '$(TF_WORKING_DIRECTORY)'
+    backendServiceArm: '$(AZURE_SERVICE_CONNECTION)'
+
+- task: UseTerraform@0
+  inputs:
+    command: 'apply'
+    workingDirectory: '$(TF_WORKING_DIRECTORY)'
+    backendServiceArm: '$(AZURE_SERVICE_CONNECTION)'
+    additionalArgs: '-auto-approve'
